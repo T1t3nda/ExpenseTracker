@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ExpenseTracker.Models.Transaction>
+
+<div class="container vh-100 d-flex align-items-center justify-content-center">
+    <div class="card w-75">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="card-title">Transaction</h5>
+            <a asp-action="AddOrEdit" class="btn btn-outline-primary btn-sm">Create New</a>
+        </div>
+        <div class="card-body">
+            <div class="form-group mb-3" style="width: 220px">
+                <label for="dataRange">Data Range:</label>
+                <select class="form-control" id="dataRange" onchange="updateGrid()">
+                    @foreach (var item in ViewBag.Data)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </div>
+            <ejs-grid id="categories" dataSource="@Model" gridLines="None"
+                      allowSorting="true" allowPaging="true">
+                <e-grid-pagesettings pageSize="5"></e-grid-pagesettings>
+                <e-grid-columns>
+                    <e-grid-column headerText="Category" field="CategoryTitleWithIcon"></e-grid-column>
+                    <e-grid-column headerText="Date" field="Date" width="110px"
+                                   type="date" format="dd-MMM-yy" textAlign="Left"></e-grid-column>
+                    <e-grid-column headerText="Amount" field="FormattedAmount" textAlign="Right" width="110px"></e-grid-column>
+                    <e-grid-column headerText="Actions" template="#actionColumnTemplate" width="100px"></e-grid-column>
+                </e-grid-columns>
+            </ejs-grid>
+        </div>
+    </div>
+</div>
+<script type="text/x-template" id="actionColumnTemplate">
+    <div class="d-flex justify-content-around">
+        <a class="no-a-decoration" href="/Transaction/AddOrEdit/${Id}">
+          <i class="fa-solid fa-pen fa-lg"></i>
+        </a>
+        <a class="no-a-decoration" href="/Transaction/Delete/${Id}">
+          <i class="fa-solid fa-trash-can fa-lg text-danger"></i>
+        </a>
+    </div>
+</script>
+
+<script>
+    function updateGrid() {
+        var pageSize = document.getElementById("dataRange").value;
+        var gridObj = document.getElementById("categories").ej2_instances[0];
+        gridObj.pageSettings.pageSize = parseInt(pageSize);
+        gridObj.refresh();
+    }
+</script>
